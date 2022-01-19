@@ -1,0 +1,45 @@
+Taxon,Area,MNI,Layer
+Primate,S1E6,0,1
+Artiodactyla,S1E6,0,1
+Testudinata,S1E6,0,1
+Cyprinidae,S1E6,0,1
+Primate,S1E6,1,2
+Artiodactyla,S1E6,7,2
+Testudinata,S1E6,2,2
+Cyprinidae,S1E6,0,2
+Primate,S1E6,0,3
+Artiodactyla,S1E6,6,3
+Testudinata,S1E6,1,3
+Cyprinidae,S1E6,0,3
+Primate,S1E6,1,4
+Artiodactyla,S1E6,7,4
+Testudinata,S1E6,1,4
+Cyprinidae,S1E6,1,4
+Primate,S2E14 Baulk,1,1
+Artiodactyla,S2E14 Baulk,4,1
+Testudinata,S2E14 Baulk,1,1
+Cyprinidae,S2E14 Baulk,0,1
+Primate,S2E14 Baulk,1,2
+Artiodactyla,S2E14 Baulk,1,2
+Testudinata,S2E14 Baulk,1,2
+Cyprinidae,S2E14 Baulk,0,2
+Primate,S2E14 Baulk,3,4
+Artiodactyla,S2E14 Baulk,5,4
+Testudinata,S2E14 Baulk,1,4
+Cyprinidae,S2E14 Baulk,0,4
+Primate,S2E14,0,1
+Artiodactyla,S2E14,0,1
+Testudinata,S2E14,1,1
+Cyprinidae,S2E14,0,1
+Primate,S2E14,1,2
+Artiodactyla,S2E14,0,2
+Testudinata,S2E14,1,2
+Cyprinidae,S2E14,0,2
+Primate,S2E14,1,4
+Artiodactyla,S2E14,1,4
+Testudinata,S2E14,1,4
+Cyprinidae,S2E14,1,4
+Primate,S2E14,0,5
+Artiodactyla,S2E14,0,5
+Testudinata,S2E14,1,5
+Cyprinidae,S2E14,0,5

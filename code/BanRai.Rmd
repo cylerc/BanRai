@@ -1,0 +1,531 @@
+## R code for analysis of the Ban Rai Rockshelter faunal data.
+
+Cyler Conrad, Department of Anthropology, University of New Mexico, cylerc@unm.edu
+
+This document contain R code to reproduce the plots and statistical analysis presented in: 
+
+> Wattanapituksakul, A., Shoocongdej, R., and Conrad, C.. in review. Preservation of Mammalian Teeth and Bones Influences Terminal Pleistocene to Middle Holocene Hunter-Gatherer Subsistence at Ban Rai Rockshelter, Northwest Thailand. Quaternary.
+
+*Please note that final script with corrected figure numbers and notation will be provided after peer review*
+
+Details of the computational environment and software dependencies are listed at the end of this document. 
+
+```{r setup, include=FALSE}
+# set the base directory for knitr to the directory above this one
+# install.packages(c("knitr", "car", "ggplot2", "reshape2", "plyr", "dplyr", "viridis, "ggpubr"))
+library(knitr)
+opts_knit$set(root.dir = '../', progress = FALSE)
+```
+
+```{r load_libraries, message = FALSE, warning = FALSE}
+# see the output of sessionInfo() at the bottom for package version numbers
+library(car)
+library(ggplot2)
+library(reshape2)
+library(plyr)
+library(dplyr)
+library(viridis)
+library(ggpubr)
+```
+
+```{r Load data}
+rel<-read.csv("data/All_NISPNTAXA.csv")
+layer1rev1<-read.csv("data/Area1Layer_rev1.csv")
+layer1rev1mni<-read.csv("data/Area1Layer_rev1mni.csv")
+layer2rev1<-read.csv("data/Area2Layer_rev1.csv")
+layer2rev1mni<-read.csv("data/Area2Layer_rev1mni.csv")
+layer3rev1<-read.csv("data/Area3Layer_rev1.csv")
+fig5<-read.csv("data/fig5.csv")
+fig6<-read.csv("data/fig6.csv")
+btrev<-read.csv("data/Area3_btrev.csv")
+```
+
+```{r Relationship between NISP/MNI and NTAXA}
+NISP<-ggplot(rel, aes(NISP, NTAXA)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm") +
+  ggtitle("") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15),
+        legend.text = element_text(size=15),
+        legend.title = element_text(size=15))
+
+MNI<-ggplot(rel, aes(MNI, NTAXA)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "lm") +
+  ggtitle("") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15),
+        legend.text = element_text(size=15),
+        legend.title = element_text(size=15))
+figure3 <- ggarrange(NISP, MNI,
+                     labels = c("A", "B"),
+                     nrow = 2)
+figure3
+ggexport(figure3, width = 1000, height = 1000, filename = "Relationships.png", res=200)
+
+#Statistical Analysis
+ggexport(figure3, width = 1000, height = 1000, filename = "Relationships.png", res=200)
+nispntaxa<- lm(rel$NISP ~ rel$NTAXA)
+summary(nispntaxa)
+mnintaxa<- lm(rel$MNI ~ rel$NTAXA)
+summary(mnintaxa)
+
+nispntaxa.1<- lm(rel_rev$NISP ~ rel_rev$NTAXA)
+summary(nispntaxa.1)
+mnintaxa.1<- lm(rel_rev$MNI ~ rel_rev$NTAXA)
+summary(mnintaxa.1)
+
+#Without Area 3
+rel<-read.csv("All_NISPNTAXA.csv")
+rel
+rel_rev <- rel[2:6, ]
+
+NISP2<-ggplot(rel_rev, aes(NISP, NTAXA)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "glm") +
+  ggtitle("") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15),
+        legend.text = element_text(size=15),
+        legend.title = element_text(size=15))
+MNI2<-ggplot(rel_rev, aes(MNI, NTAXA)) +
+  geom_point(size = 3) +
+  geom_smooth(method = "glm") +
+  ggtitle("") +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15),
+        legend.text = element_text(size=15),
+        legend.title = element_text(size=15))
+
+figure4 <- ggarrange(NISP2, MNI2,
+                     labels = c("A", "B"),
+                     nrow = 2)
+figure4
+ggexport(figure4, width = 1000, height = 1000, filename = "Relationships_woutA3.png", res=200)
+rel_rev
+```
+
+```{r Area 1 comparisons}
+layer1rev1<-read.csv("Area1Layer_rev1.csv")
+layer1rev1
+S1E4 <- layer1rev1[1:20, ]
+S2E12 <- layer1rev1[21:44, ]
+
+A1_1 <-ggplot(S1E4, aes(Layer, NISP, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("Area 1-Unit S1E4: NISP") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  ylim(0,22)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+#ggsave("Area1S1E4_PerLayer.tiff", width = 11, height = 8.5, units = "in")
+
+A1_2 <-ggplot(S2E12, aes(Layer, NISP, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("Area 1-Unit S2E12: NISP") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  ylim(0,22)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+#ggsave("Area1S2E12_PerLayer.tiff", width = 11, height = 8.5, units = "in")
+
+figure1 <- ggarrange(A1_1, A1_2,
+                    labels = c("A", "B"),
+                    nrow = 2)
+figure1
+#ggexport(figure1, width = 1000, height = 1000, filename = "Area1.png", res=200)
+
+#MNI
+layer1rev1mni<-read.csv("Area1Layer_rev1mni.csv")
+layer1rev1mni
+S1E4mni <- layer1rev1mni[1:20, ]
+S2E12mni <- layer1rev1mni[21:44, ]
+
+A1_1mni <-ggplot(S1E4mni, aes(Layer, MNI, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("Area 1-Unit S1E4: MNI") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  ylim(0,10)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+A1_1mni
+#ggsave("Area1S1E4_PerLayer.tiff", width = 11, height = 8.5, units = "in")
+
+A1_2mni <-ggplot(S2E12mni, aes(Layer, MNI, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("Area 1-Unit S2E12: MNI") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  ylim(0,10)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+A1_2mni
+#ggsave("Area1S2E12_PerLayer.tiff", width = 11, height = 8.5, units = "in")
+
+figure8_rev <- ggarrange(A1_1, A1_2,A1_1mni, A1_2mni,
+                     labels = c("A", "B", "C", "D"),
+                     nrow = 2, ncol=2)
+
+figure8_rev
+#ggexport(figure8_rev, width = 2000, height = 2000, filename = "Area1_rev.png", res=200)
+
+```
+
+```{r Area 2 comparisons}
+layer2rev1<-read.csv("Area2Layer_rev1.csv")
+layer2rev1
+S1E6 <- layer2rev1[1:16, ]
+S2E14Baulk <- layer2rev1[17:28, ]
+S2E14 <- layer2rev1[29:44, ]
+
+A2_1<-ggplot(S1E6, aes(Layer, NISP, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("Area 2-Unit S1E6: NISP") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  ylim(0,31)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+
+A2_2<-ggplot(S2E14Baulk, aes(Layer, NISP, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("Area 2-Unit S1E14 Baulk: NISP") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  ylim(0,31)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+
+A2_3<-ggplot(S2E14, aes(Layer, NISP, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("Area 2-Unit S2E14: NISP") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  ylim(0,31)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+
+#MNI
+layer2rev1mni<-read.csv("Area2Layer_rev1mni.csv")
+layer2rev1mni
+S1E6mni <- layer2rev1mni[1:16, ]
+S2E14Baulkmni <- layer2rev1mni[17:28, ]
+S2E14mni <- layer2rev1mni[29:44, ]
+
+A2_1mni<-ggplot(S1E6mni, aes(Layer, MNI, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("Area 2-Unit S1E6: MNI") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  ylim(0,10)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+
+A2_2mni<-ggplot(S2E14Baulkmni, aes(Layer, MNI, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("Area 2-Unit S2E14 Baulk: MNI") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  ylim(0,10)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+
+A2_3mni<-ggplot(S2E14mni, aes(Layer, MNI, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("Area 2-Unit S2E14: MNI") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  ylim(0,10)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+
+figure9_rev <- ggarrange(A2_1, A2_2, A2_3,
+                         A2_1mni, A2_2mni, A2_3mni,
+                     labels = c("A", "B", "C",
+                                "D","E","F"),
+                     nrow = 3, ncol=3)
+
+figure9_rev
+#ggexport(figure9_rev, width = 3000, height = 2000, filename = "Area2_rev.png", res=200)
+```
+
+```{r Area 3 comparisons}
+N5_1<-ggplot(layer3rev1, aes(Layer, NISP, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  #ylim(0,10)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+ggsave("Area3_PerLayer.tiff", width = 11, height = 8.5, units = "in")
+
+
+#MNI
+layer3rev1mni<-read.csv("Area3Layer_rev1mni.csv")
+layer3rev1mni
+
+N5_2<-ggplot(layer3rev1mni, aes(Layer, MNI, color=Taxon, group=Taxon)) +
+  geom_point(size=3) +
+  #geom_smooth(method = "glm") +
+  ggtitle("") +
+  geom_line(linetype="dashed") +
+  #xlim(0,75)+
+  #ylim(0,10)+
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))+
+  scale_color_hue(l=50, c=40)
+ggsave("Area3_PerLayer_MNI.tiff", width = 11, height = 8.5, units = "in")
+
+
+figure11_rev <- ggarrange(N5_1, N5_2,
+                          labels = c("A", "B"),
+                          nrow = 2)
+
+figure11_rev
+#ggexport(figure11_rev, width = 1000, height = 1000, filename = "Area3_rev.png", res=200)
+```
+
+```{r Area 3 bones and teeth}
+ggplot(btrev, aes(Layer, NISP, fill=Type)) +
+  geom_bar(stat = "identity", position = position_dodge(), alpha = 0.75)+
+  geom_text(aes(label = NISP), fontface = "bold", vjust = 1.5,
+            position = position_dodge(.9), size = 4) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15),
+        legend.key.size = unit(1, 'cm'),
+        legend.key.height = unit(1.5, 'cm'),
+        legend.key.width = unit(1, 'cm'),
+        legend.title = element_text(size=20), 
+        legend.text = element_text(size=15))+
+  scale_fill_manual("Type", values = c("Bone" = "brown", "Tooth" = "gray"))
+#ggsave("Area3_bt.tiff", width = 11, height = 8.5, units = "in")
+```
+
+```{r Abundance and NTAXA comparisons}
+ggplot(fig5, aes(fill=Type, y=Abundance, x=Area)) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_viridis(discrete = T) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))
+ggsave("All_Abundance.tiff", width = 5, height = 7, units = "in")
+
+ggplot(fig6, aes(y=NTAXA, x=Area)) + 
+  geom_bar(position="stack", stat="identity") +
+  scale_fill_viridis(discrete = T) +
+  theme(panel.grid.major = element_blank(), 
+        panel.grid.minor = element_blank(),
+        panel.background = element_blank(), 
+        axis.line = element_line(colour = "black"),
+        strip.background = element_rect(colour="white", fill="white"),
+        strip.text.x = element_text(colour = "black", size = 15),
+        axis.text.x = element_text(vjust=0.5, color="black", size=15),
+        axis.text.y = element_text(vjust=0.5, color="black", size=15), 
+        axis.title.y = element_text(vjust=1.0, color="black", size=15),
+        axis.title.x = element_text(vjust=0.1, color="black", size=15),
+        plot.title = element_text(hjust = 0.5, size=15))
+ggsave("All_NTAXA.tiff", width = 5, height = 6, units = "in")
+```
+
+```{r session_info}
+# Computational environment and software dependencies for this analysis.
+sessionInfo()
+```
+
+MIT License
+
+Copyright (c) 2021 Cyler Conrad
+
+Permission is hereby granted, free of charge, to any person obtaining a copy of this software and associated documentation files (the "Software"), to deal in the Software without restriction, including without limitation the rights to use, copy, modify, merge, publish, distribute, sublicense, and/or sell copies of the Software, and to permit persons to whom the Software is furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
